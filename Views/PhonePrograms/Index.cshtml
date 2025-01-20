@@ -1,0 +1,31 @@
+﻿@model IEnumerable<NewMVCProject.Models.PhoneProgram>
+
+@{
+    ViewData["Title"] = "Phone Programs";
+}
+
+<h1>Phone Programs</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Program Name</th>
+            <th>Benefits</th>
+            <th>Charge</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var program in Model)
+        {
+            <tr>
+                <td>@program.ProgramName</td>
+                <td>@program.Benefits</td>
+                <td>@program.Charge</td>
+                <td>
+                    <a asp-action="Edit" asp-route-programName="@program.ProgramName" class="btn btn-primary">Edit</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

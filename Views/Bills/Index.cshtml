@@ -1,0 +1,37 @@
+﻿@model IEnumerable<NewMVCProject.Models.Bill>
+
+@{
+    ViewData["Title"] = "Unpaid Bills";
+}
+
+<h1>Your Bills</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Phone Number</th>
+            <th>Cost of Bill</th>
+            <th>Billing Details</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var bill in Model)
+        {
+            <tr>
+                <td>@bill.PhoneNumber</td>
+                <td>@bill.Costs</td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@bill.BillId" class="btn btn-info">View Details</a>
+                </td>
+                <td>
+                    <!-- Form for "Pay Bill" button -->
+                    <form method="post" action="@Url.Action("Delete", "Bills", new { id = bill.BillId })">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn btn-danger">Pay Bill</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

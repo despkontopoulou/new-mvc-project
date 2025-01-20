@@ -1,0 +1,19 @@
+﻿@model NewMVCProject.Models.Seller
+
+@{
+    ViewData["Title"] = "Seller Dashboard";
+}
+
+<div class="text-center">
+    <h1>Welcome, @Model.User.FirstName @Model.User.LastName</h1>
+</div>
+
+<div class="d-flex justify-content-center align-items-center" style="height: 80vh;">
+    <div class="text-center">
+        <a class="btn btn-primary w-100 mb-3" asp-action="CreateSeller">Create new customer</a>
+        <br>
+        <a class="btn btn-success w-100 mb-3" asp-action="CreateProgram">Create customer bill</a>
+        <br>
+        <a class="btn btn-warning w-100 mb-3" asp-action="EditProgram">Edit customer program</a>
+    </div>
+</div>

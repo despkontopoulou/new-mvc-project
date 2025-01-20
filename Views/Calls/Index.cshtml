@@ -1,0 +1,26 @@
+﻿@model IEnumerable<NewMVCProject.Models.Call>
+
+@{
+    ViewData["Title"] = "Call History";
+}
+
+<h1>Call History</h1>
+
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Call ID</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.CallId</td>
+                <td>@item.Description</td>
+            </tr>
+        }
+    </tbody>
+</table>
