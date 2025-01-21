@@ -27,6 +27,18 @@ namespace NewMVCProject.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(string username, string password)
         {
+            if (string.IsNullOrWhiteSpace(username))
+            {
+                TempData["LoginMessage"] = "Username cannot be empty.";
+                return RedirectToAction("Login", "Authentication");
+            }
+
+            if (string.IsNullOrWhiteSpace(password))
+            {
+                TempData["LoginMessage"] = "Password cannot be empty.";
+                return RedirectToAction("Login", "Authentication");
+            }
+
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == username);
             if (user == null)
             {

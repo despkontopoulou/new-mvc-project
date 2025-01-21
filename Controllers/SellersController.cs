@@ -76,8 +76,12 @@ namespace NewMVCProject.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(UserSellerViewModel viewModel)
+        public async Task<IActionResult> Create(UserViewModel viewModel)
         {
+            if (_context.Users.Any(u => u.Username == viewModel.Username))
+            {
+                ModelState.AddModelError("Username", "This username is already taken.");
+            }
             if (ModelState.IsValid)
             {//create and save user
                 var user = new User

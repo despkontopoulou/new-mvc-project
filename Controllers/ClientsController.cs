@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using NewMVCProject.Models;
+using NewMVCProject.ViewModels;
 namespace NewMVCProject.Controllers
 {
     public class ClientsController : Controller
@@ -30,6 +32,7 @@ namespace NewMVCProject.Controllers
             var client = await _context.Clients
                 .Include(c => c.User)
                 .FirstOrDefaultAsync(c => c.UserId == id);
+
             HttpContext.Session.SetString("PhoneNumber", client.PhoneNumber);
             if (client == null) {
                 return NotFound();
@@ -66,8 +69,19 @@ namespace NewMVCProject.Controllers
         // GET: Clients/Create
         public IActionResult Create()
         {
-            ViewData["PhoneNumber"] = new SelectList(_context.Phones, "PhoneNumber", "PhoneNumber");
-            ViewData["UserId"] = new SelectList(_context.Users, "UserId", "UserId");
+            string strId= HttpContext.Session.GetString("UserId");//id of seller
+            if (string.IsNullOrEmpty(strId) || !int.TryParse(strId, out int id)) {
+                return RedirectToAction("Login", "Authentication");
+            }
+
+            var phonePrograms = _context.Programs.Select(p => new SelectListItem
+            {
+                Text = p.ProgramName,
+                Value = p.ProgramName
+            }).ToList();
+
+            ViewData["PhonePrograms"] = phonePrograms;
+
             return View();
         }
 
@@ -76,17 +90,74 @@ namespace NewMVCProject.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ClientId,Afm,PhoneNumber,UserId")] Client client)
+        public async Task<IActionResult> Create(ClientViewModel clientViewModel)
         {
-            if (ModelState.IsValid)
-            {
-                _context.Add(client);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+            
+
+            string strId=HttpContext.Session.GetString("UserId");
+            if (string.IsNullOrEmpty(strId) || !int.TryParse(strId, out int id)) {
+                return RedirectToAction("Login", "Authentication");
             }
-            ViewData["PhoneNumber"] = new SelectList(_context.Phones, "PhoneNumber", "PhoneNumber", client.PhoneNumber);
-            ViewData["UserId"] = new SelectList(_context.Users, "UserId", "UserId", client.UserId);
-            return View(client);
+
+            var phonePrograms = _context.Programs.Select(p => new SelectListItem
+            {
+                Text = p.ProgramName,
+                Value = p.ProgramName
+            }).ToList();
+
+            ViewData["PhonePrograms"] = phonePrograms;
+
+            var existingUser = await _context.Users
+            .FirstOrDefaultAsync(u => u.Username == clientViewModel.Username);
+
+            if (existingUser != null)
+            {
+                ModelState.AddModelError("Username", "This username is already taken.");
+            }
+
+            var existingPhone = await _context.Phones
+            .FirstOrDefaultAsync(p => p.PhoneNumber == clientViewModel.PhoneNumber);
+
+            if (existingPhone != null)
+            {
+                ModelState.AddModelError("PhoneNumber", "This phone number is already taken.");
+            }
+
+            if (ModelState.IsValid)
+            {//user creation
+                var user = new User
+                {
+                    FirstName = clientViewModel.FirstName,
+                    LastName = clientViewModel.LastName,
+                    Username = clientViewModel.Username,
+                    PasswordHash = AuthenticationController.HashPassword(clientViewModel.Password),
+                    Property = "Client"
+                };
+                
+                _context.Users.Add(user);
+                await _context.SaveChangesAsync();
+
+
+                //phone creation
+                var phone = new Phone
+                {
+                    PhoneNumber = clientViewModel.PhoneNumber,
+                    ProgramName = clientViewModel.ProgramName
+                };
+                _context.Phones.Add(phone);
+                await _context.SaveChangesAsync();
+
+                var client = new Client
+                {
+                    Afm = clientViewModel.AFM,
+                    PhoneNumber = phone.PhoneNumber,
+                    UserId = user.UserId
+                };
+                _context.Clients.Add(client);
+                await _context.SaveChangesAsync();
+                return RedirectToAction("Index","Sellers");
+            }
+            return View(clientViewModel);
         }
 
         // GET: Clients/Edit/5

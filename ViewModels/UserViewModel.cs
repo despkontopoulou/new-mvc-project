@@ -2,7 +2,7 @@
 
 namespace NewMVCProject.ViewModels
 {
-    public class UserSellerViewModel
+    public class UserViewModel
     {
         [Required]
         [StringLength(50)]
