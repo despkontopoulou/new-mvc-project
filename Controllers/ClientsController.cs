@@ -161,21 +161,42 @@ namespace NewMVCProject.Controllers
         }
 
         // GET: Clients/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(string phoneNumber)
         {
-            if (id == null)
+            if (string.IsNullOrEmpty(phoneNumber))
             {
                 return NotFound();
             }
+            var phone=await _context.Phones
+                .FirstOrDefaultAsync(p=>p.PhoneNumber==phoneNumber);
+            if (phone == null) { 
+                return NotFound();
+            }
 
-            var client = await _context.Clients.FindAsync(id);
+            var client = await _context.Clients
+                .FirstOrDefaultAsync(c=>c.PhoneNumber ==phoneNumber);
             if (client == null)
             {
                 return NotFound();
             }
-            ViewData["PhoneNumber"] = new SelectList(_context.Phones, "PhoneNumber", "PhoneNumber", client.PhoneNumber);
-            ViewData["UserId"] = new SelectList(_context.Users, "UserId", "UserId", client.UserId);
-            return View(client);
+
+            ViewData["Programs"] = await _context.Programs
+                .Select(p => new SelectListItem
+                {
+                    Value = p.ProgramName,
+                    Text = p.ProgramName
+                })
+                .ToListAsync();
+
+
+
+            var clientProgramViewModel = new ClientProgramViewModel
+            {
+                PhoneNumber = client.PhoneNumber,
+                ProgramName = phone.ProgramName
+            };
+
+            return View(clientProgramViewModel);
         }
 
         // POST: Clients/Edit/5
@@ -183,9 +204,9 @@ namespace NewMVCProject.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ClientId,Afm,PhoneNumber,UserId")] Client client)
+        public async Task<IActionResult> Edit(string phoneNumber,ClientProgramViewModel viewModel)
         {
-            if (id != client.ClientId)
+            if (phoneNumber != viewModel.PhoneNumber)
             {
                 return NotFound();
             }
@@ -194,12 +215,19 @@ namespace NewMVCProject.Controllers
             {
                 try
                 {
-                    _context.Update(client);
+                    var phone = await _context.Phones.FirstOrDefaultAsync(p => p.PhoneNumber == phoneNumber);
+                    if (phone == null) {
+                        return NotFound();
+                    }
+                    phone.ProgramName = viewModel.ProgramName;
+
+                    _context.Update(phone);
                     await _context.SaveChangesAsync();
+                    return RedirectToAction("Index", "Sellers");
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ClientExists(client.ClientId))
+                    if (! _context.Phones.Any(p=>p.PhoneNumber==phoneNumber))
                     {
                         return NotFound();
                     }
@@ -208,11 +236,8 @@ namespace NewMVCProject.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
             }
-            ViewData["PhoneNumber"] = new SelectList(_context.Phones, "PhoneNumber", "PhoneNumber", client.PhoneNumber);
-            ViewData["UserId"] = new SelectList(_context.Users, "UserId", "UserId", client.UserId);
-            return View(client);
+           return View(viewModel);
         }
 
         // GET: Clients/Delete/5
@@ -253,6 +278,20 @@ namespace NewMVCProject.Controllers
         private bool ClientExists(int id)
         {
             return _context.Clients.Any(e => e.ClientId == id);
+        }
+
+        public async Task<IActionResult> SelectClient()
+        {
+            var clients = await _context.Clients
+                .Include(c => c.User)
+                .Select(c => new ClientListViewModel
+                {
+                    PhoneNumber = c.PhoneNumber,
+                    FullName = c.User.FirstName + " " + c.User.LastName
+                })
+                .ToListAsync();
+
+            return View(clients);
         }
     }
 }

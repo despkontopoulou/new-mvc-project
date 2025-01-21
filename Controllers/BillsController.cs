@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using NewMVCProject.Models;
+using NewMVCProject.ViewModels;
 
 namespace NewMVCProject.Controllers
 {
@@ -56,7 +57,6 @@ namespace NewMVCProject.Controllers
         // GET: Bills/Create
         public IActionResult Create()
         {
-            ViewData["PhoneNumber"] = new SelectList(_context.Phones, "PhoneNumber", "PhoneNumber");
             return View();
         }
 
@@ -65,16 +65,28 @@ namespace NewMVCProject.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("BillId,PhoneNumber,Costs")] Bill bill)
+        public async Task<IActionResult> Create(BillViewModel viewModel)
         {
+            var existingClient = await _context.Clients.AnyAsync(c => c.PhoneNumber == viewModel.PhoneNumber);
+            if (!existingClient)
+            {
+                ModelState.AddModelError("PhoneNumber", "Client with this phone number does not exist.");
+                return View(viewModel);
+            }
+
             if (ModelState.IsValid)
             {
+                var bill = new Bill
+                {
+                    PhoneNumber = viewModel.PhoneNumber,
+                    Costs = viewModel.Costs
+                };
+
                 _context.Add(bill);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Index", "Sellers");
             }
-            ViewData["PhoneNumber"] = new SelectList(_context.Phones, "PhoneNumber", "PhoneNumber", bill.PhoneNumber);
-            return View(bill);
+            return View(viewModel);
         }
 
         // GET: Bills/Edit/5
