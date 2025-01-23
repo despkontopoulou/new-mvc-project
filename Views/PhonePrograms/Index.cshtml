@@ -4,28 +4,30 @@
     ViewData["Title"] = "Phone Programs";
 }
 
-<h1>Phone Programs</h1>
+<div class="container mt-5">
+    <h1 class="text-center mb-4">Phone Programs</h1>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>Program Name</th>
-            <th>Benefits</th>
-            <th>Charge</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var program in Model)
-        {
+    <table class="table table-striped table-hover table-bordered">
+        <thead class="table-dark">
             <tr>
-                <td>@program.ProgramName</td>
-                <td>@program.Benefits</td>
-                <td>@program.Charge</td>
-                <td>
-                    <a asp-action="Edit" asp-route-programName="@program.ProgramName" class="btn btn-primary">Edit</a>
-                </td>
+                <th>Program Name</th>
+                <th>Benefits</th>
+                <th>Charge</th>
+                <th>Actions</th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var program in Model)
+            {
+                <tr>
+                    <td>@program.ProgramName</td>
+                    <td>@program.Benefits</td>
+                    <td>@program.Charge</td>
+                    <td>
+                        <a asp-action="Edit" asp-route-programName="@program.ProgramName" class="btn btn-dark btn-sm">Edit</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel;
 
 namespace NewMVCProject.ViewModels
 {
@@ -8,6 +9,7 @@ namespace NewMVCProject.ViewModels
         [Key]
         [StringLength(50, ErrorMessage = "Program name cannot exceed 50 characters.")]
         [Required(ErrorMessage = "Program name is required.")]
+        [Display(Name="Program Name")]
         public string ProgramName { get; set; } = null!;
 
         [Column(TypeName = "text")]

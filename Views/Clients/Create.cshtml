@@ -1,62 +1,66 @@
 ﻿@model NewMVCProject.ViewModels.ClientViewModel
 
-<form asp-action="Create" method="post">
-    <div>
-        <label for="FirstName">First Name</label>
-        <input type="text" id="FirstName" name="FirstName" required />
-    </div>
+<div class="container d-flex justify-content-center align-items-center" style="height: 80vh;">
+    <div class="w-100">
+        <h1 class="text-center mb-4">Create Client</h1>
 
-    <div>
-        <label for="LastName">Last Name</label>
-        <input type="text" id="LastName" name="LastName" required />
-    </div>
+        <form asp-action="Create" method="post">
+            <div class="form-group mb-3">
+                <label for="FirstName" class="control-label">First Name</label>
+                <input type="text" id="FirstName" name="FirstName" class="form-control" required />
+            </div>
 
-    <div>
-        <label for="Username">Username</label>
-        <input type="text" id="Username" name="Username" required />
+            <div class="form-group mb-3">
+                <label for="LastName" class="control-label">Last Name</label>
+                <input type="text" id="LastName" name="LastName" class="form-control" required />
+            </div>
 
-        @if (ViewData.ModelState["Username"]?.Errors.Any() == true)
-        {
-            <span class="text-danger">@ViewData.ModelState["Username"]?.Errors[0].ErrorMessage</span>
-        }
-    </div>
-
-    <div>
-        <label for="Password">Password</label>
-        <input type="password" id="Password" name="Password" required />
-    </div>
-
-    <div>
-        <label for="PhoneNumber">Phone Number</label>
-        <input type="text" id="PhoneNumber" name="PhoneNumber" required />
-
-        @if (ViewData.ModelState["PhoneNumber"]?.Errors.Any() == true)
-        {
-            <span class="text-danger">@ViewData.ModelState["PhoneNumber"]?.Errors[0].ErrorMessage</span>
-        }
-    </div>
-
-    <div>
-        <label for="ProgramName">Phone Program</label>
-        <select id="ProgramName" name="ProgramName" required>
-            @if (ViewData["PhonePrograms"] != null)
-            {
-                foreach (var program in ViewData["PhonePrograms"] as List<SelectListItem>)
+            <div class="form-group mb-3">
+                <label for="Username" class="control-label">Username</label>
+                <input type="text" id="Username" name="Username" class="form-control" required />
+                @if (ViewData.ModelState["Username"]?.Errors.Any() == true)
                 {
-                    <option value="@program.Value">@program.Text</option>
+                    <span class="text-danger">@ViewData.ModelState["Username"]?.Errors[0].ErrorMessage</span>
                 }
-            }
-            else
-            {
-                <option value="">No programs available</option>
-            }
-        </select>
-    </div>
+            </div>
 
-    <div>
-        <label for="AFM">AFM</label>
-        <input type="text" id="AFM" name="AFM" required />
-    </div>
+            <div class="form-group mb-3">
+                <label for="Password" class="control-label">Password</label>
+                <input type="password" id="Password" name="Password" class="form-control" required />
+            </div>
 
-    <button type="submit">Create Client</button>
-</form>
+            <div class="form-group mb-3">
+                <label for="PhoneNumber" class="control-label">Phone Number</label>
+                <input type="text" id="PhoneNumber" name="PhoneNumber" class="form-control" required />
+                @if (ViewData.ModelState["PhoneNumber"]?.Errors.Any() == true)
+                {
+                    <span class="text-danger">@ViewData.ModelState["PhoneNumber"]?.Errors[0].ErrorMessage</span>
+                }
+            </div>
+
+            <div class="form-group mb-3">
+                <label for="ProgramName" class="control-label">Phone Program</label>
+                <select id="ProgramName" name="ProgramName" class="form-control" required>
+                    @if (ViewData["PhonePrograms"] != null)
+                    {
+                        foreach (var program in ViewData["PhonePrograms"] as List<SelectListItem>)
+                        {
+                            <option value="@program.Value">@program.Text</option>
+                        }
+                    }
+                    else
+                    {
+                        <option value="">No programs available</option>
+                    }
+                </select>
+            </div>
+
+            <div class="form-group mb-3">
+                <label for="AFM" class="control-label">AFM</label>
+                <input type="text" id="AFM" name="AFM" class="form-control" required />
+            </div>
+
+            <button type="submit" class="btn btn-dark w-10 py-2 fs-4 mx-auto d-block">Create Client</button>
+        </form>
+    </div>
+</div>

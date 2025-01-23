@@ -4,28 +4,28 @@
     ViewData["Title"] = "Select Client to Edit";
 }
 
-<h2>Select a Client to Edit</h2>
+<div class="container mt-5">
+    <h2 class="text-center mb-4">Select a Client to Edit</h2>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>Full Name</th>
-            <th>Phone Number</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var client in Model)
-        {
+    <table class="table table-striped table-hover table-bordered">
+        <thead class="table-dark">
             <tr>
-                <td>@client.FullName</td>
-                <td>@client.PhoneNumber</td>
-                <td>
-                    <a asp-action="Edit" asp-controller="Clients" asp-route-phoneNumber="@client.PhoneNumber" class="btn btn-warning">
-                        Edit Program
-                    </a>
-                </td>
+                <th>Full Name</th>
+                <th>Phone Number</th>
+                <th>Actions</th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var client in Model)
+            {
+                <tr>
+                    <td>@client.FullName</td>
+                    <td>@client.PhoneNumber</td>
+                    <td>
+                        <a asp-action="Edit" asp-controller="Clients" asp-route-phoneNumber="@client.PhoneNumber" class="btn btn-dark btn-sm">Edit Program</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

@@ -28,5 +28,20 @@ namespace NewMVCProject.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+
+        public IActionResult RedirectToRole()
+        {
+            string role= HttpContext.Session.GetString("UserRole");
+            if (string.IsNullOrEmpty(role)){
+                return RedirectToAction("Login", "Authentication");
+            }
+            return role switch
+            {
+                "Admin" => RedirectToAction("Index", "Admins"),
+                "Client" => RedirectToAction("Index", "Clients"),
+                "Seller" => RedirectToAction("Index", "Sellers"),
+                _ => RedirectToAction("Login", "Authentication"),
+            };
+        }
     }
 }
