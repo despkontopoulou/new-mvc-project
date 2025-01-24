@@ -139,39 +139,6 @@ namespace NewMVCProject.Controllers
             return View(phoneProgramViewModel);
         }
 
-        // GET: PhonePrograms/Delete/5
-        public async Task<IActionResult> Delete(string id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var phoneProgram = await _context.Programs
-                .FirstOrDefaultAsync(m => m.ProgramName == id);
-            if (phoneProgram == null)
-            {
-                return NotFound();
-            }
-
-            return View(phoneProgram);
-        }
-
-        // POST: PhonePrograms/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(string id)
-        {
-            var phoneProgram = await _context.Programs.FindAsync(id);
-            if (phoneProgram != null)
-            {
-                _context.Programs.Remove(phoneProgram);
-            }
-
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
-
         private bool PhoneProgramExists(string id)
         {
             return _context.Programs.Any(e => e.ProgramName == id);
