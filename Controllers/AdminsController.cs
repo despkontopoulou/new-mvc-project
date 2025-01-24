@@ -27,7 +27,7 @@ namespace NewMVCProject.Controllers
 
             if (string.IsNullOrEmpty(strId) || !int.TryParse(strId, out int id))
             {
-                return RedirectToAction("Login", "Authentication"); // redirect to login if session is invalid
+                return RedirectToAction("Login", "Authentication"); 
             }
 
 
